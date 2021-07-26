@@ -7,7 +7,7 @@ CREATE TABLE posts (
   PRIMARY KEY (id)
 );
 
-INSERT INTO posts (message, likes, area) VALUES 
+INSERT INTO posts (message, likes, area) VALUES
   ('post-1', 12, 'Tokyo'),
   ('post-2', 8, 'Fukuoka'),
   ('post-3', 11, 'Tokyo'),
@@ -20,10 +20,8 @@ INSERT INTO posts (message, likes, area) VALUES
 
 SELECT
   *,
-  SUM(likes) OVER (
-    PARTITION BY area -- partitionは同じグループの塊
-    ORDER BY likes -- 小さい順にする
-    ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING -- 前後1行をフレームにする
-    ) AS area_sum -- likesの小さい順で累計集計
+  ROW_NUMBER() OVER(ORDER BY likes) as num, -- likesの低い順 連番 123456789
+  RANK() OVER(ORDER BY likes) as rank, -- 123356789
+  DENSE_RANK() OVER(ORDER BY likes) as dense -- 123345678
 FROM
   posts;

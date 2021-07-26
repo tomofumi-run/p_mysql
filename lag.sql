@@ -20,10 +20,8 @@ INSERT INTO posts (message, likes, area) VALUES
 
 SELECT
   *,
-  SUM(likes) OVER (
-    PARTITION BY area -- partitionは同じグループの塊
-    ORDER BY likes -- 小さい順にする
-    ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING -- 前後1行をフレームにする
-    ) AS area_sum -- likesの小さい順で累計集計
+  LAG(likes) OVER(ORDER BY likes) as lag, -- 1つ前の値を抽出
+  LEAD(likes) OVER(ORDER BY likes) as lead, -- 1つ後の値を抽出
+  likes - LAG(likes) OVER(ORDER BY likes) as diff -- 差分を確認することも可能
 FROM
   posts;
