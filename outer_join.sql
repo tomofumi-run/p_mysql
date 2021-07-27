@@ -1,4 +1,5 @@
 -- 内部結合
+DROP TABLE IF EXISTS posts; -- userより前に削除しないと整合性が取れなくなる
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
   id INT NOT NULL AUTO_INCREMENT,
@@ -7,13 +8,16 @@ CREATE TABLE users (
   PRIMARY KEY(id)
 );
 
-DROP TABLE IF EXISTS posts;
 CREATE TABLE posts (
  id INT NOT NULL AUTO_INCREMENT,
  user_id INT,
  title VARCHAR(15),
  body VARCHAR(140),
- PRIMARY KEY(id)
+ PRIMARY KEY(id),
+ FOREIGN KEY(user_id) REFERENCES users(id)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE
+ -- userに参照して、user_idが存在しなければ弾いて欲しい。
 );
 
 INSERT INTO users (name, introduction) VALUES
